@@ -33,7 +33,6 @@ ui <- fluidPage(
                                  tags$div(class = "panel-body", DTOutput("metadata_table"))
                         )
                       ),
-                      tabPanel("
                       
                       # Section for the plot
                       h3("Plot"),
