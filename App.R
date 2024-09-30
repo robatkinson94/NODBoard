@@ -122,7 +122,7 @@ observeEvent(input$plot_data, {
     slice(1)  # In case of ties, select the first one
   
   # Create a line graph for dropout data
-  p2 <- ggplot(dropout_data, aes(x = as.factor(Passage_Number), y = Count, color = Imaging_Identifier, group = Imaging_Identifier)) +
+  p2 <- ggplot(dropout_data, aes(x = as.factor(Passage_Number), y = Count, color = Parent_Plate, group = Imaging_Identifier)) +
     geom_line(size = 1) +
     geom_point(size = 2) +
     labs(x = "Passage Number", y = "Number of Wells with Confluence > 1%", 
