@@ -9,10 +9,10 @@ ui <- fluidPage(
   titlePanel("CSV Upload and Plot App"),
 
   tabsetPanel(
-    tabPanel("Navbar 1",
+    tabPanel("View Confluence and Dropout",
       sidebarLayout(
         sidebarPanel(
-          fileInput("files", "Upload Imaging CSV Files", multiple = TRUE, accept = ".csv"),
+          fileInput("files", "Upload NyOne Results Files", multiple = TRUE, accept = ".csv"),
           fileInput("metadata", "Upload Benchling Registration Tables", multiple = TRUE, accept = ".csv"),
           checkboxInput("filter_by_plate", "Filter by Source Plate ID", value = FALSE),
           downloadButton("download_data", "Download Transformed Data"),
@@ -33,12 +33,8 @@ ui <- fluidPage(
                      tags$div(class = "panel-body", DTOutput("metadata_table"))
             )
           ),
-          
-          # Section for the plot
-          h3("Plot"),
-          plotOutput("plot"),
-          
-          # Collapsible section for data preview table
+
+                    # Collapsible section for data preview table
           tags$div(
             class = "panel panel-default",
             tags$div(
@@ -48,6 +44,9 @@ ui <- fluidPage(
             ),
             tags$div(id = "dataPreview", class = "panel-collapse collapse",
                      tags$div(class = "panel-body", tableOutput("preview"))
+          # Section for the plot
+          h3("Plot"),
+          plotOutput("plot"),
             )
           )
         )
