@@ -3,7 +3,7 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(DT)  # For editable tables
-#testgitfunction
+
 # Define UI
 ui <- fluidPage(
   titlePanel("CSV Upload and Plot App"),
@@ -65,7 +65,7 @@ server <- function(input, output, session) {
     
     # Extract the "M000", "M001", etc., from filenames and add as a new column
     file_list <- mapply(function(df, filename) {
-      df$Imaging_Identifier <- stringr::str_extract(filename, "M00[0-4]")
+      df$Imaging_Identifier <- stringr::str_extract(filename, "M00[0-9]")
       return(df)
     }, file_list, input$files$name, SIMPLIFY = FALSE)
     
@@ -114,7 +114,6 @@ server <- function(input, output, session) {
 
     # Create the plot with Imaging_Identifier nested within Passage_Number
     p <- ggplot(plot_data, aes(x = as.factor(Passage_Number), y = Mean, color = Imaging_Identifier, group = Imaging_Identifier)) +
-      geom_line(position = position_dodge(width = 0.3)) +
       geom_point(position = position_dodge(width = 0.3)) +
       geom_errorbar(aes(ymin = Mean - Error, ymax = Mean + Error), width = 0.2, position = position_dodge(width = 0.3)) +
       labs(x = "Passage Number", y = "Cell Confluence (%)", 
