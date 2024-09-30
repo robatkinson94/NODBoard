@@ -50,7 +50,6 @@ ui <- fluidPage(
                                  tags$div(class = "panel-body", tableOutput("preview"))
                         )
                       )
-                    )
       tabPanel("Navbar2", "This panel is intentionally left blank")
                   )
                 )
