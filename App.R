@@ -46,10 +46,16 @@ server <- function(input, output, session) {
     names(file_list) <- input$files$name
     
     # Extract the "M000", "M001", etc., from filenames and add as a new column
-    file_list <- mapply(function(df, filename) {
+    file_list <- mapply(function(df, filename, filepath) {
       df$Imaging_Identifier <- stringr::str_extract(filename, "M00[0-9]")
+      
+      # Get file creation date and time
+      file_info <- file.info(filepath)
+      df$File_Creation_Date <- as.Date(file_info$ctime)
+      df$File_Creation_Time <- format(file_info$ctime, "%H:%M:%S")
+      
       return(df)
-    }, file_list, input$files$name, SIMPLIFY = FALSE)
+    }, file_list, input$files$name, input$files$datapath, SIMPLIFY = FALSE)
     
     file_data$data <- file_list
     
@@ -135,7 +141,7 @@ server <- function(input, output, session) {
       combined_metadata <- bind_rows(file_data$metadata)
       merged_data <- combined_data %>%
         left_join(combined_metadata, by = c("Plate Barcode" = "Plate Name")) %>%
-        select(everything(), Passage_Number = `Passage Number`, Parent_Plate = `Parent Plate`, Imaging_Identifier)  # Add Passage Number, Parent Plate, and Imaging Identifier
+        select(everything(), Passage_Number = `Passage Number`, Parent_Plate = `Parent Plate`, Imaging_Identifier, File_Creation_Date, File_Creation_Time)  # Add Passage Number, Parent Plate, Imaging Identifier, File Creation Date, and File Creation Time
       write_csv(merged_data, file)
     }
   )
