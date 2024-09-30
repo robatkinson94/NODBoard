@@ -102,7 +102,7 @@ observeEvent(input$plot_data, {
               Error = sd(`Cell Confluence (%)`, na.rm = TRUE) / sqrt(n()))
 
   # Create the first plot with Imaging_Identifier nested within Passage_Number
-  p <- ggplot(plot_data, aes(x = as.factor(Passage_Number), y = Mean, color = Imaging_Identifier, group = Imaging_Identifier)) +
+  p <- ggplot(plot_data, aes(x = as.factor(Passage_Number), y = Mean, color = Parent_Plate, group = Imaging_Identifier)) +
     geom_point(position = position_dodge(width = 0.3)) +
     geom_errorbar(aes(ymin = Mean - Error, ymax = Mean + Error), width = 0.2, position = position_dodge(width = 0.3)) +
     labs(x = "Passage Number", y = "Cell Confluence (%)", 
