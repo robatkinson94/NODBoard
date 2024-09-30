@@ -23,7 +23,10 @@ ui <- fluidPage(
         mainPanel(
           # Section for the plot (separate from collapsible sections)
           h3("Mean Confluence +/-SEM"),
-          plotOutput("plot")
+          plotOutput("plot"),
+          # Section for second plot (dropout plot)
+          h3("Number of Wells with Confluence >1%"),
+          plotOutput("plot2")
         )
       )
     ),
@@ -62,13 +65,6 @@ server <- function(input, output, session) {
     metadata_list <- lapply(input$metadata$datapath, read_csv)
     names(metadata_list) <- input$metadata$name
     file_data$metadata <- metadata_list
-    
-    # Display the metadata tables
-    output$metadata_table <- renderDT({
-      combined_metadata <- bind_rows(metadata_list)
-      datatable(combined_metadata, editable = TRUE)
-    })
-  })
   
   # Join metadata with imaging data and generate the plot
   observeEvent(input$plot_data, {
