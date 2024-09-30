@@ -32,7 +32,7 @@ ui <- fluidPage(
         )
       ),
       
-      # Collapsible section for the plot
+      # Section for the plot
       h3("Plot"),
       plotOutput("plot"),
       
