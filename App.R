@@ -21,32 +21,6 @@ ui <- fluidPage(
         ),
         
         mainPanel(
-          # Collapsible section for metadata tables
-          tags$div(
-            class = "panel panel-default",
-            tags$div(
-              class = "panel-heading",
-              tags$h3(class = "panel-title", 
-                      tags$a("Benchling Registration Tables", href = "#metadataTable", `data-toggle` = "collapse"))
-            ),
-            tags$div(id = "metadataTable", class = "panel-collapse collapse",
-                     tags$div(class = "panel-body", DTOutput("metadata_table"))
-            )
-          ),
-
-          # Collapsible section for data preview table
-          tags$div(
-            class = "panel panel-default",
-            tags$div(
-              class = "panel-heading",
-              tags$h3(class = "panel-title", 
-                      tags$a("Data Preview", href = "#dataPreview", `data-toggle` = "collapse"))
-            ),
-            tags$div(id = "dataPreview", class = "panel-collapse collapse",
-                     tags$div(class = "panel-body", tableOutput("preview"))
-            )
-          ),
-          
           # Section for the plot (separate from collapsible sections)
           h3("Plot"),
           plotOutput("plot")
