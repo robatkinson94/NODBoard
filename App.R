@@ -43,7 +43,7 @@ ui <- fluidPage(
                       tags$a("Data Preview", href = "#dataPreview", `data-toggle` = "collapse"))
             ),
             tags$div(id = "dataPreview", class = "panel-collapse collapse",
-                     tags$div(class = "panel-body", tableOutput("preview"),
+                     tags$div(class = "panel-body", tableOutput("preview")),
           # Section for the plot
           h3("Plot"),
           plotOutput("plot"))
