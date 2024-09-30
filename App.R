@@ -65,6 +65,13 @@ server <- function(input, output, session) {
     metadata_list <- lapply(input$metadata$datapath, read_csv)
     names(metadata_list) <- input$metadata$name
     file_data$metadata <- metadata_list
+    
+    # Display the metadata tables
+    output$metadata_table <- renderDT({
+      combined_metadata <- bind_rows(metadata_list)
+      datatable(combined_metadata, editable = TRUE)
+    })
+  }) # <-- Missing closing bracket for metadata upload observer
   
   # Join metadata with imaging data and generate the plot
   observeEvent(input$plot_data, {
@@ -76,50 +83,4 @@ server <- function(input, output, session) {
     # Combine all metadata into one dataframe
     combined_metadata <- bind_rows(file_data$metadata)
     
-    # Join with metadata based on "Plate Barcode" in imaging data and "Plate Name" in metadata
-    merged_data <- combined_data %>%
-      left_join(combined_metadata, by = c("Plate Barcode" = "Plate Name")) %>%
-      select(everything(), Passage_Number = `Passage Number`, Parent_Plate = `Parent Plate`)  # Add Passage Number and Parent Plate
-
-    # Calculate the mean and error (using SEM here), grouped by Passage and Imaging_Identifier
-    plot_data <- merged_data %>%
-      group_by(Passage_Number, Imaging_Identifier, Parent_Plate) %>%
-      summarise(Mean = mean(`Cell Confluence (%)`, na.rm = TRUE),
-                Error = sd(`Cell Confluence (%)`, na.rm = TRUE) / sqrt(n()))
-
-    # Create the plot with Imaging_Identifier nested within Passage_Number
-    p <- ggplot(plot_data, aes(x = as.factor(Passage_Number), y = Mean, color = Imaging_Identifier, group = Imaging_Identifier)) +
-      geom_point(position = position_dodge(width = 0.3)) +
-      geom_errorbar(aes(ymin = Mean - Error, ymax = Mean + Error), width = 0.2, position = position_dodge(width = 0.3)) +
-      labs(x = "Passage Number", y = "Cell Confluence (%)", 
-           title = "Plot of Cell Confluence (%) by Passage Number and Imaging Identifier") +
-      theme_minimal() +
-      ylim(0, 100)  # Fixed y-axis range from 0 to 100
-
-    output$plot <- renderPlot({ p })
-    
-    # Save the plot for download
-    output$download_plot <- downloadHandler(
-      filename = function() { "plot.png" },
-      content = function(file) {
-        ggsave(file, p, width = 8, height = 6)
-      }
-    )
-  })
-  
-  # Download transformed data (merged with metadata and imaging identifier)
-  output$download_data <- downloadHandler(
-    filename = function() { "transformed_data.csv" },
-    content = function(file) {
-      combined_data <- bind_rows(file_data$data)
-      combined_metadata <- bind_rows(file_data$metadata)
-      merged_data <- combined_data %>%
-        left_join(combined_metadata, by = c("Plate Barcode" = "Plate Name")) %>%
-        select(everything(), Passage_Number = `Passage Number`, Parent_Plate = `Parent Plate`, Imaging_Identifier)  # Add Passage Number, Parent Plate, and Imaging Identifier
-      write_csv(merged_data, file)
-    }
-  )
-}
-
-# Run the application 
-shinyApp(ui = ui, server = server)
+    # Join with metadata based on "Plate Barcode" in ima
