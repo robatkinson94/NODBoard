@@ -4,7 +4,8 @@ library(dplyr)
 library(readr)
 library(DT)  # For editable tables
 
-# Define UI
+
+### Define UI
 ui <- fluidPage(
   titlePanel("CSV Upload and Plot App"),
   
