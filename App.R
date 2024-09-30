@@ -114,7 +114,7 @@ observeEvent(input$plot_data, {
   
   # Create the second plot for dropout rate as a line graph
   dropout_data <- merged_data %>%
-    group_by(Passage_Number, Imaging_Identifier) %>%
+    group_by(Passage_Number, Imaging_Identifier, Parent_Plate) %>%
     summarise(Count = sum(`Cell Confluence (%)` > 1, na.rm = TRUE)) %>%
     ungroup() %>%
     group_by(Passage_Number) %>%
