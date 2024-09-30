@@ -6,9 +6,6 @@ library(DT)  # For editable tables
 
 
 ### Define UI
-ui <- fluidPage(
-  titlePanel("CSV Upload and Plot App"),
-
  ui <- fluidPage(
   titlePanel("CSV Upload and Plot App"),
 
