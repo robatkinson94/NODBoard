@@ -112,22 +112,24 @@ observeEvent(input$plot_data, {
 
   output$plot <- renderPlot({ p })
   
-  # Create the second plot for dropout rate as a line graph
-  dropout_data <- merged_data %>%
-    group_by(Passage_Number, Imaging_Identifier, Parent_Plate) %>%
-    summarise(Count = sum(`Cell Confluence (%)` > 1, na.rm = TRUE)) %>%
-    ungroup() %>%
-    group_by(Passage_Number)
-  
-  # Create a line graph for dropout data
-  p2 <- ggplot(dropout_data, aes(x = as.factor(Passage_Number), y = Count, color = Parent_Plate, group = Imaging_Identifier)) +
-    geom_line(size = 1) +
-    geom_point(size = 2) +
-    labs(x = "Passage Number", y = "Number of Wells with Confluence > 1%", 
-         title = "Number of Wells with Confluence > 1% by Passage Number (Highest Imaging Identifier)") +
-    theme_minimal()
+# Create the second plot for dropout rate as a line graph
+dropout_data <- merged_data %>%
+  group_by(Passage_Number, Imaging_Identifier, Parent_Plate) %>%
+  summarise(Count = sum(`Cell Confluence (%)` > 1, na.rm = TRUE), .groups = 'drop') %>%
+  # For each Passage_Number and Parent_Plate, keep only the row with the highest Imaging_Identifier
+  group_by(Passage_Number, Parent_Plate) %>%
+  filter(Imaging_Identifier == max(Imaging_Identifier)) %>%
+  ungroup()
 
-  output$plot2 <- renderPlot({ p2 })
+# Create a line graph for dropout data
+p2 <- ggplot(dropout_data, aes(x = as.factor(Passage_Number), y = Count, color = Parent_Plate, group = Parent_Plate)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(x = "Passage Number", y = "Number of Wells with Confluence > 1%", 
+       title = "Number of Wells with Confluence > 1% by Passage Number (Highest Imaging Identifier per Parent Plate)") +
+  theme_minimal()
+
+output$plot2 <- renderPlot({ p2 })
   
   # Save the first plot for download
   output$download_plot <- downloadHandler(
