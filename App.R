@@ -34,7 +34,7 @@ ui <- fluidPage(
             )
           ),
 
-                    # Collapsible section for data preview table
+          # Collapsible section for data preview table
           tags$div(
             class = "panel panel-default",
             tags$div(
@@ -43,11 +43,13 @@ ui <- fluidPage(
                       tags$a("Data Preview", href = "#dataPreview", `data-toggle` = "collapse"))
             ),
             tags$div(id = "dataPreview", class = "panel-collapse collapse",
-                     tags$div(class = "panel-body", tableOutput("preview")),
-          # Section for the plot
+                     tags$div(class = "panel-body", tableOutput("preview"))
+            )
+          ),
+          
+          # Section for the plot (separate from collapsible sections)
           h3("Plot"),
-          plotOutput("plot"))
-          )
+          plotOutput("plot")
         )
       )
     ),
