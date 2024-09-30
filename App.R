@@ -4,9 +4,8 @@ library(dplyr)
 library(readr)
 library(DT)  # For editable tables
 
-
-### Define UI
- ui <- fluidPage(
+# Define UI
+ui <- fluidPage(
   titlePanel("CSV Upload and Plot App"),
 
   tabsetPanel(
@@ -57,28 +56,6 @@ library(DT)  # For editable tables
     tabPanel("Navbar 2", "This panel is intentionally left blank")
   )
 )
-
-                      
-                      # Section for the plot
-                      h3("Plot"),
-                      plotOutput("plot"),
-                      
-                      # Collapsible section for data preview table
-                      tags$div(
-                        class = "panel panel-default",
-                        tags$div(
-                          class = "panel-heading",
-                          tags$h3(class = "panel-title", 
-                                  tags$a("Data Preview", href = "#dataPreview", `data-toggle` = "collapse"))
-                        ),
-                        tags$div(id = "dataPreview", class = "panel-collapse collapse",
-                                 tags$div(class = "panel-body", tableOutput("preview"))
-                        )
-                        )
-                      ),
-      tabPanel("Navbar2", "This panel is intentionally left blank")
-                  )
-                )
 
 # Define Server
 server <- function(input, output, session) {
