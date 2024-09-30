@@ -8,50 +8,53 @@ library(DT)  # For editable tables
 ### Define UI
 ui <- fluidPage(
   titlePanel("CSV Upload and Plot App"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      fileInput("files", "Upload Imaging CSV Files", multiple = TRUE, accept = ".csv"),
-      fileInput("metadata", "Upload Benchling Registration Tables", multiple = TRUE, accept = ".csv"),
-      checkboxInput("filter_by_plate", "Filter by Source Plate ID", value = FALSE),
-      downloadButton("download_data", "Download Transformed Data"),
-      downloadButton("download_plot", "Download Plot"),
-      actionButton("plot_data", "Generate Plot")
-    ),
-    
-    mainPanel(
-      # Collapsible section for metadata tables
-      tags$div(
-        class = "panel panel-default",
-        tags$div(
-          class = "panel-heading",
-          tags$h3(class = "panel-title", 
-                  tags$a("Benchling Registration Tables", href = "#metadataTable", `data-toggle` = "collapse"))
-        ),
-        tags$div(id = "metadataTable", class = "panel-collapse collapse",
-                 tags$div(class = "panel-body", DTOutput("metadata_table"))
-        )
-      ),
-      
-      # Section for the plot
-      h3("Plot"),
-      plotOutput("plot"),
-      
-      # Collapsible section for data preview table
-      tags$div(
-        class = "panel panel-default",
-        tags$div(
-          class = "panel-heading",
-          tags$h3(class = "panel-title", 
-                  tags$a("Data Preview", href = "#dataPreview", `data-toggle` = "collapse"))
-        ),
-        tags$div(id = "dataPreview", class = "panel-collapse collapse",
-                 tags$div(class = "panel-body", tableOutput("preview"))
-        )
-      )
-    )
-  )
-)
+
+  tabPanel("Navbar 1",
+                  sidebarLayout(
+                    sidebarPanel(
+                      fileInput("files", "Upload Imaging CSV Files", multiple = TRUE, accept = ".csv"),
+                      fileInput("metadata", "Upload Benchling Registration Tables", multiple = TRUE, accept = ".csv"),
+                      checkboxInput("filter_by_plate", "Filter by Source Plate ID", value = FALSE),
+                      downloadButton("download_data", "Download Transformed Data"),
+                      downloadButton("download_plot", "Download Plot"),
+                      actionButton("plot_data", "Generate Plot")
+                    ),
+                    
+                    mainPanel(
+                      # Collapsible section for metadata tables
+                      tags$div(
+                        class = "panel panel-default",
+                        tags$div(
+                          class = "panel-heading",
+                          tags$h3(class = "panel-title", 
+                                  tags$a("Benchling Registration Tables", href = "#metadataTable", `data-toggle` = "collapse"))
+                        ),
+                        tags$div(id = "metadataTable", class = "panel-collapse collapse",
+                                 tags$div(class = "panel-body", DTOutput("metadata_table"))
+                        )
+                      ),
+                      tabPanel("
+                      
+                      # Section for the plot
+                      h3("Plot"),
+                      plotOutput("plot"),
+                      
+                      # Collapsible section for data preview table
+                      tags$div(
+                        class = "panel panel-default",
+                        tags$div(
+                          class = "panel-heading",
+                          tags$h3(class = "panel-title", 
+                                  tags$a("Data Preview", href = "#dataPreview", `data-toggle` = "collapse"))
+                        ),
+                        tags$div(id = "dataPreview", class = "panel-collapse collapse",
+                                 tags$div(class = "panel-body", tableOutput("preview"))
+                        )
+                      )
+                    )
+      tabPanel("Navbar2", "This panel is intentionally left blank)
+                  )
+                )
 
 # Define Server
 server <- function(input, output, session) {
