@@ -117,9 +117,7 @@ observeEvent(input$plot_data, {
     group_by(Passage_Number, Imaging_Identifier, Parent_Plate) %>%
     summarise(Count = sum(`Cell Confluence (%)` > 1, na.rm = TRUE)) %>%
     ungroup() %>%
-    group_by(Passage_Number) %>%
-    filter(Count == max(Count)) %>%
-    slice(1)  # In case of ties, select the first one
+    group_by(Passage_Number)
   
   # Create a line graph for dropout data
   p2 <- ggplot(dropout_data, aes(x = as.factor(Passage_Number), y = Count, color = Parent_Plate, group = Imaging_Identifier)) +
