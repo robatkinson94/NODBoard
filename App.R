@@ -52,7 +52,7 @@ ui <- fluidPage(
                         )
                       )
                     )
-      tabPanel("Navbar2", "This panel is intentionally left blank)
+      tabPanel("Navbar2", "This panel is intentionally left blank")
                   )
                 )
 
