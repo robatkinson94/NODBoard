@@ -22,7 +22,7 @@ ui <- fluidPage(
         
         mainPanel(
           # Section for the plot (separate from collapsible sections)
-          h3("Plot"),
+          h3("Mean Confluence +/-SEM"),
           plotOutput("plot")
         )
       )
