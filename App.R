@@ -92,7 +92,7 @@ observeEvent(input$plot_data, {
   
   # Join with metadata based on "Plate Barcode" in imaging data and "Plate Name" in metadata
   merged_data <- combined_data %>%
-    left_join(combined_metadata, by = c("Plate Barcode" = "Plate Name")) %>%
+    inner_join(combined_metadata, by = c("Plate Barcode" = "Plate Name")) %>%
     select(everything(), Passage_Number = `Passage Number`, Parent_Plate = `Parent Plate`)  # Add Passage Number and Parent Plate
 
   # Calculate the mean and error (using SEM here), grouped by Passage and Imaging_Identifier
