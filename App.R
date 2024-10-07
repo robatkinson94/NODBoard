@@ -3,9 +3,11 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(DT)  # For editable tables
+library(bslib)
 
 # Define UI
 ui <- fluidPage(
+  bsthemer(),
   titlePanel("CSV Upload and Plot App"),
 
   tabsetPanel(
