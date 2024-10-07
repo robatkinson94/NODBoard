@@ -7,7 +7,7 @@ library(bslib)
 
 # Define UI
 ui <- fluidPage(
-  bsthemer(),
+  bs_themer(),
   titlePanel("CSV Upload and Plot App"),
 
   tabsetPanel(
