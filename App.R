@@ -33,7 +33,7 @@ ui <- fluidPage(
                  ),
                  div(class = "card",
                      div(class = "card-body",
-                         h4(class = "card-title", "Median Confluence of the Campaign"),
+                         h4(class = "card-title", "Median Confluence of Current Campaign"),
                          numericInput("hours_since_last_run", "Hours Since Last Imaging Run", value = 0, min = 0, step = 1),
                          p(class = "card-text", textOutput("adjusted_median_confluence"))
                      )
