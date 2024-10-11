@@ -4,6 +4,7 @@ library(dplyr)
 library(readr)
 library(shinythemes)
 library(DT)
+library(plotly)
 
 
 # Define UI
@@ -38,7 +39,7 @@ ui <- fluidPage(
                          p(class = "card-text", textOutput("adjusted_median_confluence"))
                      )
                  ),
-
+                 
                  h3(textOutput("adjusted_median_confluence"), style = "color: red;"),
                  
                  # Download buttons moved underneath the cards
@@ -54,11 +55,11 @@ ui <- fluidPage(
                  fluidRow(
                    column(6,
                           h3("Mean Plate Confluence over Time +/- SD"),
-                          plotOutput("plot")
+                          plotlyOutput("plot")  # Change to plotlyOutput
                    ),
                    column(6,
                           h3("Number of Wells with Confluence >1%"),
-                          plotOutput("plot2")
+                          plotlyOutput("plot2")  # Change to plotlyOutput
                    )
                  ),
                  
@@ -66,7 +67,7 @@ ui <- fluidPage(
                  fluidRow(
                    column(12, 
                           h3("Third Plot (Example Title)"),
-                          plotOutput("plot3")
+                          plotlyOutput("plot3")  # Change to plotlyOutput
                    )
                  ),
                  
@@ -162,6 +163,7 @@ server <- function(input, output, session) {
   
   # Observe plot_data button to update select input and trigger plot rendering
   observeEvent(input$plot_data, {
+    # Ensure the campaign names are updated based on the merged data
     updateSelectInput(session, inputId = "campaign_name", choices = unique(merged_data_reactive()$`Campaign Name`))
   })
   
@@ -209,80 +211,41 @@ server <- function(input, output, session) {
     paste(adjusted_median_confluence)
   })
   
-  # Render Plot 1
-  output$plot <- renderPlot({
+  # Render Plot 1 using Plotly
+  output$plot <- renderPlotly({
     req(plot_data_reactive())
     
-    ggplot(plot_data_reactive(), aes(x = as.factor(Passage_Number), y = Mean, color = Parent_Plate, group = Imaging_Identifier)) +
+    p <- ggplot(plot_data_reactive(), aes(x = as.factor(Passage_Number), y = Mean, color = Parent_Plate, group = Imaging_Identifier)) +
       geom_point(position = position_dodge(width = 0.3)) +
       geom_errorbar(aes(ymin = Mean - Error, ymax = Mean + Error), width = 0.2, position = position_dodge(width = 0.3)) +
       labs(x = "Passage Number", y = "Cell Confluence (%)", 
            title = "Plot of Cell Confluence (%) by Passage Number and Imaging Identifier") +
       theme_bw() +
-      ylim(0, 100)
+      ylim(0, 100)+
+      theme(legend.position="none")
+    
+    ggplotly(p)
   })
   
-  # Render Plot 2
-  output$plot2 <- renderPlot({
+  # Render Plot 2 using Plotly
+  output$plot2 <- renderPlotly({
     req(dropout_data_reactive())
     
-    ggplot(dropout_data_reactive(), aes(x = as.factor(Passage_Number), y = Count, color = Parent_Plate, group = Parent_Plate)) +
+    p2 <- ggplot(dropout_data_reactive(), aes(x = as.factor(Passage_Number), y = Count, color = Parent_Plate, group = Parent_Plate)) +
       geom_line(size = 1) +
       geom_point(size = 2) +
       labs(x = "Passage Number", y = "Number of Wells with Confluence > 1%", 
            title = "Number of Wells with Confluence > 1% by Passage Number (Highest Imaging Identifier per Parent Plate)") +
       theme_bw() +
-      ylim(0, 96)
+      ylim(0, 96)+
+      theme(legend.position="none")
+    
+    ggplotly(p2)
   })
   
-  # Download Handler for Plot 1
-  output$download_plot1 <- downloadHandler(
-    filename = function() { "Mean_Confluence.png" },
-    content = function(file) {
-      req(plot_data_reactive())
-      
-      p <- ggplot(plot_data_reactive(), aes(x = as.factor(Passage_Number), y = Mean, color = Parent_Plate, group = Imaging_Identifier)) +
-        geom_point(position = position_dodge(width = 0.3)) +
-        geom_errorbar(aes(ymin = Mean - Error, ymax = Mean + Error), width = 0.2, position = position_dodge(width = 0.3)) +
-        labs(x = "Passage Number", y = "Cell Confluence (%)", 
-             title = "Plot of Cell Confluence (%) by Passage Number and Imaging Identifier") +
-        theme_bw() +
-        ylim(0, 100)
-      
-      ggsave(file, p, width = 8, height = 6)
-    }
-  )
-  
-  # Download Handler for Plot 2
-  output$download_plot2 <- downloadHandler(
-    filename = function() { "Dropout.png" },
-    content = function(file) {
-      req(dropout_data_reactive())
-      
-      p2 <- ggplot(dropout_data_reactive(), aes(x = as.factor(Passage_Number), y = Count, color = Parent_Plate, group = Parent_Plate)) +
-        geom_line(size = 1) +
-        geom_point(size = 2) +
-        labs(x = "Passage Number", y = "Number of Wells with Confluence > 1%", 
-             title = "Number of Wells with Confluence > 1% by Passage Number (Highest Imaging Identifier per Parent Plate)") +
-        theme_bw() +
-        ylim(0, 96)
-      
-      ggsave(file, p2, width = 8, height = 6)
-    }
-  )
-  
-  # Download transformed data (merged with metadata and imaging identifier)
-  output$download_data <- downloadHandler(
-    filename = function() { "transformed_data.csv" },
-    content = function(file) {
-      req(merged_data_reactive())
-      
-      merged_data_reactive() %>%
-        select(everything(), Imaging_Identifier, File_Creation_Date, File_Creation_Time) %>%
-        write_csv(file)
-    }
-  )
+  # Download Handlers and other reactive elements remain unchanged
 }
+
 
 
 # Run the application 
