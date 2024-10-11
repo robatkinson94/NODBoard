@@ -71,9 +71,7 @@ ui <- fluidPage(
                    )
                  ),
                  
-                 # Optional display for metadata table and data preview
-                 DTOutput("metadata_table"), # Display metadata table (optional)
-                 tableOutput("preview")      # Display data preview (optional)
+
                )
              )
     ),
@@ -202,6 +200,8 @@ server <- function(input, output, session) {
     highest_imaging_data <- campaign_data %>%
       filter(Imaging_Identifier == max(Imaging_Identifier, na.rm = TRUE))
     
+    
+    #SUMMARISE CAN I ADD AN ERROR VALUE HERE E.G. SD
     median_confluence <- highest_imaging_data %>%
       summarise(Median_Confluence = median(`Cell Confluence (%)`, na.rm = TRUE)) %>%
       pull(Median_Confluence)
@@ -242,6 +242,55 @@ server <- function(input, output, session) {
     
     ggplotly(p2)
   })
+  
+  # Render Plot 3 using Plotly
+  # Reactive expression for scatterplot data with adjusted Mean
+  scatterplot_data_reactive <- reactive({
+    req(input$campaign_name, merged_data_reactive(), input$hours_since_last_run)
+    
+    highest_imaging_data <- merged_data_reactive() %>%
+      filter(`Campaign Name` == input$campaign_name) %>%
+      filter(Imaging_Identifier == max(Imaging_Identifier, na.rm = TRUE))
+    
+    scatterplot_data <- highest_imaging_data %>%
+      group_by(Parent_Plate) %>%
+      summarise(Mean = mean(`Cell Confluence (%)`, na.rm = TRUE),
+                NormSD = sd(`Cell Confluence (%)`, na.rm = TRUE)/Mean)
+    
+    # Adjust the Mean based on hours since last run
+    scatterplot_data <- scatterplot_data %>%
+      mutate(Adjusted_Mean = Mean * (1 + 2)^(input$hours_since_last_run / 24))
+    
+    return(scatterplot_data)
+  })
+  
+  
+
+  
+  # Render Plot 3 (Scatterplot) using Plotly
+  # Render Plot 3 (Scatterplot) using Plotly with Adjusted Mean
+  output$plot3 <- renderPlotly({
+    req(scatterplot_data_reactive())
+    
+    scatter_data <- scatterplot_data_reactive()
+    
+    p3 <- ggplot(scatter_data, aes(x = Adjusted_Mean, y = NormSD, color = Parent_Plate)) +
+      geom_rect(aes(NULL,NULL,xmin=50,xmax=90),
+                ymin=0,ymax=0.6, fill="yellow", size=0.5, alpha=0.1)+
+      geom_rect(aes(NULL,NULL,xmin=60,xmax=80),
+                ymin=0,ymax=0.3, fill="green", size=0.5, alpha=0.2)+
+      geom_point(size = 3) +
+      labs(x = "Adjusted Mean Cell Confluence (%)", y = "Standard Deviation (NormSD)",
+           title = "Scatterplot of Adjusted Mean vs NormSD by Parent Plate") +
+      theme_bw()+
+      theme(legend.position="none")+
+      xlim(0,100)+
+      ylim(0,1)
+    
+    ggplotly(p3)
+  })
+  
+  
   
   # Download Handlers and other reactive elements remain unchanged
 }
